@@ -84,6 +84,17 @@
       margin-bottom: 1rem;
     }
 
+    /* === Стиль для кликабельных контактов === */
+    .contact-link {
+      color: #007bff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .contact-link:hover {
+      color: #0056b3;
+    }
+
     /* === Футер === */
     .site-footer {
       background-color: #f1f1f1;
@@ -93,7 +104,7 @@
       color: #444;
     }
 
-    /* === Стили для dialog (по желанию, улучшают внешний вид) === */
+    /* === Стили для dialog === */
     dialog {
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -165,8 +176,8 @@
 
     <section class="section">
       <h1 class="section__title">Контактная информация</h1>
-      <p>Телефон: 8 (800) 555-35-35</p>
-      <p>Email: info@example.com</p>
+      <p>Телефон: <span class="contact-link" data-focus="phone">8 (800) 555-35-35</span></p>
+      <p>Email: <span class="contact-link" data-focus="email">info@example.com</span></p>
       <button id="openDialog" type="button">Написать через форму</button>
     </section>
   </main>
@@ -215,8 +226,29 @@
     const closeBtn = document.getElementById('closeDialog');
     const form = document.getElementById('contactForm');
 
-    openBtn.addEventListener('click', () => {
+    // Функция открытия формы с фокусом на нужном поле
+    function openFormAndFocus(fieldId) {
       dialog.showModal();
+      // Небольшая задержка — чтобы браузер успел отрисовать диалог
+      setTimeout(() => {
+        const field = document.getElementById(fieldId);
+        if (field) field.focus();
+      }, 10);
+    }
+
+    // Обычное открытие формы (без фокуса)
+    openBtn.addEventListener('click', () => {
+      openFormAndFocus('name'); // можно оставить 'name' или убрать фокус
+    });
+
+    // Клик по телефону или email
+    document.querySelectorAll('.contact-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const focusField = e.currentTarget.dataset.focus;
+        if (focusField) {
+          openFormAndFocus(focusField);
+        }
+      });
     });
 
     closeBtn.addEventListener('click', () => {
@@ -225,7 +257,6 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      // Здесь можно добавить отправку данных, например, через fetch
       alert('Форма отправлена! (демо)');
       dialog.close();
     });
